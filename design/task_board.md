@@ -10,16 +10,13 @@
 ---
 
 ## 🚀 In Progress
-- [ ] **P0-1**: Create Pet class with happiness attribute (int, 0-100, start at 70)
 
 ---
 
 ## 📝 Ready to Start (Priority Order)
 
 ### Highest Priority (Do First)
-- [ ] **P0-2**: Create FocusTimer class with remaining_seconds attribute (int)
 - [ ] **P0-3**: Write simple console test that creates both objects and prints their state
-- [ ] **P0-4**: Add start() method to FocusTimer that prints "Timer started"
 - [ ] **P0-5**: Simulate timer completion (print "Focus complete!" and increase pet happiness by 10)
 
 ### Medium Priority (Do Second)
@@ -38,4 +35,6 @@
 ---
 
 ## ✅ Done
-*(Move completed tasks here)*
+- [x] **P0-1**: Create Pet class with happiness attribute (int, 0-100, start at 70)
+- [x] **P0-2**: Create FocusTimer class with remaining_seconds attribute (int)
+- [x] **P0-4**: Add start() method to FocusTimer that prints "Timer started"
