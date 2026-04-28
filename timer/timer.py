@@ -1,6 +1,8 @@
 class Timer:
     def __init__(self, duration_minutes=25):
         self.duration_seconds = int(duration_minutes * 60)
+        if self.duration_seconds < 1:
+            raise ValueError(f"Duration must be at least 1 second, got {self.duration_seconds} seconds")
         self.remaining_seconds = self.duration_seconds
         self.is_running = False
         self.is_paused = False

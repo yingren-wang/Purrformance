@@ -10,14 +10,12 @@
 ---
 
 ## 🚀 In Progress
-
 ---
 
 ## 📝 Ready to Start (Priority Order)
 
 ### Highest Priority (Do First)
-- [ ] **P0-3**: Write simple console test that creates both objects and prints their state
-- [ ] **P0-5**: Simulate timer completion (print "Focus complete!" and increase pet happiness by 10)
+
 
 ### Medium Priority (Do Second)
 - [ ] **P1-1**: Create FloatingWindow class that opens a blank window (any library)
@@ -38,3 +36,5 @@
 - [x] **P0-1**: Create Pet class with happiness attribute (int, 0-100, start at 70)
 - [x] **P0-2**: Create FocusTimer class with remaining_seconds attribute (int)
 - [x] **P0-4**: Add start() method to FocusTimer that prints "Timer started"
+- [x] **P0-3**: Write simple console test that creates both objects and prints their state
+- [x] **P0-5**: Simulate timer completion (print "Focus complete!" and increase pet growth by 10)
