@@ -16,7 +16,7 @@ def main():
     
     # Create pet and timer
     my_pet = Pet("Lychee")
-    my_timer = Timer(25)
+    my_timer = Timer()
     
     # Create and show the floating window
     window = FloatingWindow(my_pet, my_timer)

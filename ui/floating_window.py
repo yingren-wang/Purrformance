@@ -1,5 +1,5 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel, QPushButton
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton
 from PyQt5.QtCore import Qt, QTimer
 import time
 from timer.timer import Timer
@@ -17,7 +17,7 @@ class FloatingWindow(QWidget):
             Qt.WindowStaysOnTopHint
         )
 
-        self.setAttribute(Qt.WA_TranslucentBackground)
+        # self.setAttribute(Qt.WA_TranslucentBackground)
         self.setGeometry(100, 100, 280, 220)
         
         self.drag_pos = None
@@ -52,41 +52,51 @@ class FloatingWindow(QWidget):
         self.stats_label.adjustSize()
         layout.addWidget(self.stats_label)
 
-        button_layout = QVBoxLayout()
+        interaction_button_layout = QHBoxLayout()
         self.feed_button = QPushButton("🍗 Feed")
         self.feed_button.clicked.connect(self.feed_pet)
-        button_layout.addWidget(self.feed_button)
+        interaction_button_layout.addWidget(self.feed_button)
         self.play_button = QPushButton("🎾 Play")
         self.play_button.clicked.connect(self.play_with_pet)
-        button_layout.addWidget(self.play_button)
+        interaction_button_layout.addWidget(self.play_button)
         self.focus_button = QPushButton("⏱️ Focus")
         self.focus_button.clicked.connect(self.on_focus_clicked)
-        button_layout.addWidget(self.focus_button)
-        layout.addLayout(button_layout)
+        interaction_button_layout.addWidget(self.focus_button)
+        layout.addLayout(interaction_button_layout)
 
         # Timer Widget                         
-        timer_widget = QWidget()
-        timer_widget.setFixedHeight(80)
-        timer_layout = QVBoxLayout(timer_widget) 
-        timer_layout.setSpacing(6)
+        self.timer_widget = QWidget()
+        self.timer_widget.setFixedHeight(100)
+        self.timer_layout = QVBoxLayout(self.timer_widget) 
+        self.timer_layout.setSpacing(6)
         
         # Timer Display
         self.timer_label = QLabel()
         self.timer_label.setStyleSheet("font-size: 24px; font-family: monospace;")
         self.timer_label.setAlignment(Qt.AlignCenter | Qt.AlignTop)
-        self.timer_label.hide()
-        timer_layout.addWidget(self.timer_label)
-       
+        self.timer_layout.addWidget(self.timer_label)
+    
+        # Timer Control Buttons
+        self.timer_button_widget = QWidget()
+        self.timer_button_layout = QHBoxLayout(self.timer_button_widget)
         # Start Button
-        self.start_button = QPushButton("Start Focus")
+        self.start_button = QPushButton("Start")
         self.start_button.clicked.connect(self.on_focus_start_clicked)
-        self.start_button.hide()
-        timer_layout.addWidget(self.start_button)
-        # todo: start button can be in horizontal layout with pause and cancel buttons, and only show when timer is active
-
-        timer_layout.addStretch()
-
-        layout.addWidget(timer_widget)
+        self.timer_button_layout.addWidget(self.start_button)
+        self.pause_button = QPushButton("Pause")
+        self.pause_button.clicked.connect(self.on_focus_pause_clicked)
+        self.timer_button_layout.addWidget(self.pause_button)
+        self.stop_button = QPushButton("Stop")
+        self.stop_button.clicked.connect(self.on_focus_stop_clicked)
+        self.timer_button_layout.addWidget(self.stop_button)
+        self.reset_button = QPushButton("Reset")
+        self.reset_button.clicked.connect(self.on_focus_reset_clicked)
+        self.timer_button_layout.addWidget(self.reset_button)
+        
+        self.timer_layout.addWidget(self.timer_button_widget)
+        self.timer_widget.hide()
+        layout.addWidget(self.timer_widget)
+        layout.addStretch()
 
         self.setLayout(layout)
     
@@ -100,36 +110,54 @@ class FloatingWindow(QWidget):
         )
     
     def on_focus_clicked(self):
-        self.start_button.show()
-        self.timer_label.show()
+        self.timer_widget.show()
         # todo: prompt timer duration input
-        self.timer = Timer(0.1)
+        self.timer.set_duration(0.1)
         self.timer_label.setText(self.timer.get_display_time())
-        
+        print(f"Showing timer widget: {self.timer_widget}")
+        print(f"Timer widget parent: {self.timer_widget.parent()}")
+
     def on_focus_start_clicked(self):
-        self.start_button.hide()
         # todo: prompt timer duration input
         self.timer.start()
         self.clock.start(1000)
     
+    def on_focus_pause_clicked(self):
+        # todo: change start and pause interactively
+        self.timer.pause()
+    
+    def on_focus_stop_clicked(self):
+        self.timer.stop()
+
+    def on_focus_reset_clicked(self):
+        self.timer.reset()
+        self.update_timer_and_display()
+    
+    # todo: deal with the transparency LAAAATER
+    def _hide_timer_widget_clean(self):
+        self.timer_widget.hide()
+        self.setAttribute(Qt.WA_TranslucentBackground, False)
+        self.setAttribute(Qt.WA_TranslucentBackground, True)
+        self.update()
+
     def update_timer_and_display(self):
         if self.timer is None:
             return
         
-        self.timer.tick()
-        self.timer_label.setText(self.timer.get_display_time())
-        if self.timer.is_completed:
+        if self.timer.is_running:
+            self.timer.tick()
+            self.timer_label.setText(self.timer.get_display_time())
+        elif self.timer.is_completed:
+            self.timer_widget.hide()
             self.clock.stop()
-            self.timer_label.hide()
-            self.start_button.hide()
-            
+            self.timer.reset()
             self.pet.increase_growth(10)
             self.update_stats_display()
             print("🎉 Focus complete! Pet growth increased!")
-
-    def update_timer_display(self):
-        mins, secs = divmod(self.remaining_seconds, 60)
-        self.timer_label.setText(f"{mins:02d}:{secs:02d}")
+        else:
+            self.clock.stop()
+            print("Timer paused or stopped, clock stopped")
+            self.timer_label.setText(self.timer.get_display_time())
 
     def feed_pet(self):
         if self.pet.got_fed():

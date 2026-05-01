@@ -14,7 +14,7 @@
 ---
 
 ## 📝 Ready to Start (Priority Order)
-- [ ] Add pause, start/restart, reset, cancel button and feature to Timer UI
+
 
 ### Highest Priority (Do First)
 
@@ -27,6 +27,7 @@
 - [ ] **P2-3**: Save/load pet state
 - [ ] **P2-4**: Add pet emotions (happy/sad/tired)
 - [ ] **P2-5**: Add water/stretch reminders
+- [ ] Set backgroung to transparent
 
 ---
 
@@ -41,3 +42,4 @@
 - [x] **P1-3**: Add timer display to window (just text showing "25:00")
 - [x] **P1-4**: Add Start button that triggers the timer
 - [x] Add focus, feed, and play button
+- [x] Add pause, start/restart, reset, cancel button and feature to Timer UI
