@@ -10,10 +10,11 @@
 ---
 
 ## 🚀 In Progress
+
 ---
 
 ## 📝 Ready to Start (Priority Order)
-
+- [ ] Add pause, start/restart, reset, cancel button and feature to Timer UI
 
 ### Highest Priority (Do First)
 
@@ -22,7 +23,6 @@
 
 
 ### Lower Priority (Add Later)
-- [ ] **P2-1**: Add feed button (console print for now)
 - [ ] **P2-2**: Add coins system
 - [ ] **P2-3**: Save/load pet state
 - [ ] **P2-4**: Add pet emotions (happy/sad/tired)
@@ -40,3 +40,4 @@
 - [x] **P1-2**: Make window stay on top of other windows
 - [x] **P1-3**: Add timer display to window (just text showing "25:00")
 - [x] **P1-4**: Add Start button that triggers the timer
+- [x] Add focus, feed, and play button

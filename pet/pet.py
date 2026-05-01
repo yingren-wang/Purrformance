@@ -1,3 +1,6 @@
+import random
+
+
 class Pet:
     def __init__(self, name="Lychee"):
         self.name = name
@@ -32,4 +35,14 @@ class Pet:
     def decrease_health(self, amount):
         self.health = max(0, self.health - amount)
 
+    def got_fed(self):
+        self.increase_health(10)
+        return True
+    
+    def invited_to_play(self):
+        if random.random() < 0.3:
+            print("😴 Pet is not in the mood to play.")
+            return False
+        self.increase_happiness(10)
+        return True
     

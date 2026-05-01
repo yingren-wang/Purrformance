@@ -10,11 +10,6 @@
    - stand up/stretching reminder (stretch)
    - eye protection
    - sleep reminder
-3. rest reminder
-water reminder (drinking)
-stand up/stretching reminder (stretch)
-eye protection
-sleep reminder
 4. regular state
    - rest
    - sleep
@@ -51,11 +46,18 @@ play/rest -> happiness
 5. not having the button interface, but rather a small "home" with tools that need to interface. for example, just a home button. go to home, you can see cat-stick, cat-bowl for playing/feeding.
 6. visiting friend's cat?
 7. mirror mode? - pet status is the user status.
+8. AI talking to cat feature. User can type to cat or talk to cat to stimulate cat's change of stats
+9. training mode - train your cat with clicker training, they can do tricks as well!
+10. Birthday
+11. Send cat out can bring back souvenir/hunting result (or have the cat as a stay-home cat)
+12. vaccine system?? is it too complicated?
 
 ## todo feature
 1. focus history
 2. pet customization
 3. achievements
+4. tomato timer
+5. badge system/gallery
 
 ## visual/ui
 can generate looks using ai and prompts, this can be done separately manually on website instead of code calling api
@@ -84,3 +86,44 @@ can generate looks using ai and prompts, this can be done separately manually on
 - save/load player progress
 
 ## User flow
+
+# UI Design
+- pet
+- name
+- stats
+- three buttons
+   - focus
+      - coding/typing
+      - reading
+      - writing
+         - click, then show timer prompt
+            - confirm timer prompt, then enter focus mode: timer display is added to the floating window
+   - feed
+      - inventory with food available to feed
+         - hop on food show food stats
+         - click food will feed
+   - play
+      - inventory with toys available to play
+         - hop on toy show toy stats
+         - click toy will play
+   - info and setting?? (scrollable text)
+      - cat's info
+         - name
+         - breed
+         - DoB (age)
+         - gender
+      - focus setting
+         - default focus time
+         - tomato timer
+            - [toggle]after the focus session, auto start a rest session
+               - default session count
+               - default tomato focus time (override)
+               - default rest time
+         - focus type
+            - customize focus type
+               - change name
+               - add more focus type
+      - pet auto action
+         - [toggle] feed/play
+      - reminder system
+         - [toggle]

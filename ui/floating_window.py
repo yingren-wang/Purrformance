@@ -2,6 +2,7 @@ import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel, QPushButton
 from PyQt5.QtCore import Qt, QTimer
 import time
+from timer.timer import Timer
 
 class FloatingWindow(QWidget):
     def __init__(self, pet, timer):
@@ -20,10 +21,12 @@ class FloatingWindow(QWidget):
         self.setGeometry(100, 100, 280, 220)
         
         self.drag_pos = None
-        self.countdown_timer = None
         
         self.setup_ui()
         self.update_stats_display()
+
+        self.clock = QTimer()
+        self.clock.timeout.connect(self.update_timer_and_display)
     
     def setup_ui(self):
         layout = QVBoxLayout()
@@ -48,87 +51,96 @@ class FloatingWindow(QWidget):
         self.stats_label.setMinimumHeight(50)
         self.stats_label.adjustSize()
         layout.addWidget(self.stats_label)
-                                        
-        # Timer display
-        self.timer_label = QLabel("25:00")
+
+        button_layout = QVBoxLayout()
+        self.feed_button = QPushButton("🍗 Feed")
+        self.feed_button.clicked.connect(self.feed_pet)
+        button_layout.addWidget(self.feed_button)
+        self.play_button = QPushButton("🎾 Play")
+        self.play_button.clicked.connect(self.play_with_pet)
+        button_layout.addWidget(self.play_button)
+        self.focus_button = QPushButton("⏱️ Focus")
+        self.focus_button.clicked.connect(self.on_focus_clicked)
+        button_layout.addWidget(self.focus_button)
+        layout.addLayout(button_layout)
+
+        # Timer Widget                         
+        timer_widget = QWidget()
+        timer_widget.setFixedHeight(80)
+        timer_layout = QVBoxLayout(timer_widget) 
+        timer_layout.setSpacing(6)
+        
+        # Timer Display
+        self.timer_label = QLabel()
         self.timer_label.setStyleSheet("font-size: 24px; font-family: monospace;")
-        self.timer_label.setAlignment(Qt.AlignCenter)
-        layout.addWidget(self.timer_label)
-        
-        # Buttons
+        self.timer_label.setAlignment(Qt.AlignCenter | Qt.AlignTop)
+        self.timer_label.hide()
+        timer_layout.addWidget(self.timer_label)
+       
+        # Start Button
         self.start_button = QPushButton("Start Focus")
-        self.start_button.clicked.connect(self.start_focus)
-        layout.addWidget(self.start_button)
-        
-        # self.feed_button = QPushButton("🍗 Feed")
-        # self.feed_button.clicked.connect(self.feed_pet)
-        # layout.addWidget(self.feed_button)
-        
-        # self.play_button = QPushButton("🎾 Play")
-        # self.play_button.clicked.connect(self.play_with_pet)
-        # layout.addWidget(self.play_button)
-        
+        self.start_button.clicked.connect(self.on_focus_start_clicked)
+        self.start_button.hide()
+        timer_layout.addWidget(self.start_button)
+        # todo: start button can be in horizontal layout with pause and cancel buttons, and only show when timer is active
+
+        timer_layout.addStretch()
+
+        layout.addWidget(timer_widget)
+
         self.setLayout(layout)
     
     def update_stats_display(self):
         """Update the stats label with current pet values"""
         self.stats_label.setText(
+            f"💪 Health: {self.pet.get_health()}\n"
             f"❤️ Happiness: {self.pet.get_happiness()}\n "
-            f"🌱 Growth: {self.pet.get_growth()}\n "
-            f"💪 Health: {self.pet.get_health()}"
+            f"🌱 Growth: {self.pet.get_growth()}"
             # f"🪙 Coins: {self.pet.get_coins()}"
         )
-        self.stats_label.repaint()
     
-    def start_focus(self):
-        """Start a focus session"""
-        minutes = 0.1  # You can make this user-selectable later
-        self.timer = type(self.timer)(minutes)  # Create new timer
+    def on_focus_clicked(self):
+        self.start_button.show()
+        self.timer_label.show()
+        # todo: prompt timer duration input
+        self.timer = Timer(0.1)
+        self.timer_label.setText(self.timer.get_display_time())
+        
+    def on_focus_start_clicked(self):
+        self.start_button.hide()
+        # todo: prompt timer duration input
         self.timer.start()
-        
-        self.start_button.setEnabled(False)
-        self.start_button.setText("Focusing...")
-        
-        # Create a QTimer that ticks every second
-        self.countdown_timer = QTimer()
-        self.countdown_timer.timeout.connect(self.update_timer)
-        self.countdown_timer.start(1000)  # 1000 ms = 1 second
+        self.clock.start(1000)
     
-    def update_timer(self):
-        """Called every second during focus"""
-        display_time = self.timer.get_display_time()
-        self.timer_label.setText(display_time)
+    def update_timer_and_display(self):
+        if self.timer is None:
+            return
         
         self.timer.tick()
-        
+        self.timer_label.setText(self.timer.get_display_time())
         if self.timer.is_completed:
-            self.countdown_timer.stop()
-            self.start_button.setEnabled(True)
-            self.start_button.setText("Start Focus")
-            self.timer_label.setText("25:00")
+            self.clock.stop()
+            self.timer_label.hide()
+            self.start_button.hide()
             
             self.pet.increase_growth(10)
-            # self.pet.add_coins(5)
             self.update_stats_display()
-            
             print("🎉 Focus complete! Pet growth increased!")
-    
-    # def feed_pet(self):
-    #     """Feed the pet"""
-    #     if self.pet.feed():
-    #         self.update_stats_display()
-    #         print("🍗 Pet fed! Happiness increased.")
-    #     else:
-    #         print("❌ Not enough coins! Complete a focus session first.")
-    
-    # def play_with_pet(self):
-    #     """Play with the pet"""
-    #     if self.pet.play():
-    #         self.update_stats_display()
-    #         print("🎾 Pet played! Happiness increased.")
-    #     else:
-    #         print("❌ Not enough coins! Complete a focus session first.")
-    
+
+    def update_timer_display(self):
+        mins, secs = divmod(self.remaining_seconds, 60)
+        self.timer_label.setText(f"{mins:02d}:{secs:02d}")
+
+    def feed_pet(self):
+        if self.pet.got_fed():
+            self.update_stats_display()
+            print("🍗 Pet fed! Happiness increased.")
+       
+    def play_with_pet(self):
+        if self.pet.invited_to_play():
+            self.update_stats_display()
+            print("🎾 Pet played! Happiness increased.")
+        
     # Drag window functionality
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
